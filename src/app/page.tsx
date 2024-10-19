@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-import { LatestPost } from "~/app/_components/post";
-import { api, HydrateClient } from "~/trpc/server";
+import { HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
   return (
@@ -11,8 +10,9 @@ export default async function Home() {
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
             Subtitle Runner Pro
           </h1>
-            <Link href="/subs">Show Subtitles</Link>
-            <Link href="/control">Control Subtitles</Link>
+          <Link href="/subs">Show Subtitles</Link>
+          <Link href="/control">Control Subtitles</Link>
+          <Link href="/songs">Administrate Songs</Link>
         </div>
       </main>
     </HydrateClient>

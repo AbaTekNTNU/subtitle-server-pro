@@ -11,21 +11,21 @@ datasource db {
 }
 
 model Song {
-  id           Int            @id @default(autoincrement())
-  title        String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  subtitleLine SubtitleLine[]
+  id            Int            @id @default(autoincrement())
+  title         String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subtitleLines SubtitleLine[]
 }
 
 model SubtitleLine {
   id        Int      @id @default(autoincrement())
   song      Song     @relation(fields: [songId], references: [id])
   songId    Int
-  top       String
-  bottom    String
-  left      String
-  right     String
+  top       String?
+  bottom    String?
+  left      String?
+  right     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

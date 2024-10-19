@@ -4,22 +4,22 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { tracked } from "@trpc/server";
 
-const subtitleSchema = z.object({
-  top: z.string().optional(),
-  bottom: z.string().optional(),
-  left: z.string().optional(),
-  right: z.string().optional(),
+export const subtitleSchema = z.object({
+  top: z.string().optional().nullable(),
+  bottom: z.string().optional().nullable(),
+  left: z.string().optional().nullable(),
+  right: z.string().optional().nullable(),
 });
 export type Subtitle = z.infer<typeof subtitleSchema>;
 
 // create a global event emitter (could be replaced by redis, etc.)
-export const currentSubEmitter = new EventEmitter<{"set": Subtitle[]}>();
+export const currentSubEmitter = new EventEmitter<{ set: Subtitle[] }>();
 
 export const subsRouter = createTRPCRouter({
   getCurrentSubtitle: publicProcedure.query(async () => {
-    return ({
-      bottom: "Test!"
-    });
+    return {
+      bottom: "Test!",
+    };
   }),
 
   onSubtitleChanged: publicProcedure.subscription(async function* () {
@@ -28,13 +28,16 @@ export const subsRouter = createTRPCRouter({
     for await (const [data] of on(currentSubEmitter, "set")) {
       const subtitle = data as Subtitle;
       i++;
-      yield tracked(`${subtitle.top}-${subtitle.bottom}-${subtitle.left}-${subtitle.right}-${i}`, subtitle);
+      yield tracked(
+        `${subtitle.top}-${subtitle.bottom}-${subtitle.left}-${subtitle.right}-${i}`,
+        subtitle,
+      );
     }
   }),
 
   setActiveSubtitle: publicProcedure
-    .input(subtitleSchema).mutation(async ({ input }
-    ) => {
+    .input(subtitleSchema)
+    .mutation(async ({ input }) => {
       currentSubEmitter.emit("set", input);
     }),
 });
