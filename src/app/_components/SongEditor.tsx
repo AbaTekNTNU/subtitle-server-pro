@@ -20,7 +20,8 @@ export default function SongEditor() {
       />
       <h3 className="text-2xl">Subtitle Lines</h3>
       <p>
-        bottom;top;left;right separated by semicolon to change display position
+        bottom::top::left::right separated by semicolon to change display
+        position
       </p>
       <textarea
         className="h-80 text-black"
@@ -36,12 +37,12 @@ export default function SongEditor() {
               title,
               subtitleLines: subtitleLines
                 .split(/\n/)
-                .map((line) => line.split(";"))
+                .map((line) => line.split("::"))
                 .map(([bottom, top, left, right]) => ({
-                  bottom,
-                  top,
-                  left,
-                  right,
+                  bottom: bottom?.trim(),
+                  top: top?.trim(),
+                  left: left?.trim(),
+                  right: right?.trim(),
                 })),
             })
             .then(() => {

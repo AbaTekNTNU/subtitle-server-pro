@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "~/trpc/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Subtitle } from "~/server/api/routers/subs";
 
 type Props = {
@@ -11,8 +11,6 @@ type Props = {
 export default function SubtitleControl({ subtitles }: Props) {
   const setActiveSubtitle = api.subs.setActiveSubtitle.useMutation();
   const [currentLine, setCurrentLine] = useState<number>();
-  const currentSubtitle =
-    currentLine !== undefined ? subtitles[currentLine] : undefined;
 
   const setLine = (line: number) => {
     if (line < 0 || line >= subtitles.length) {
@@ -25,14 +23,42 @@ export default function SubtitleControl({ subtitles }: Props) {
     if (subtitle) setActiveSubtitle.mutate(subtitle);
   };
 
+  useEffect(() => {
+    // add event listener for keydown
+    const handleKeyDown = (e: KeyboardEvent) => {
+      console.log(e.key);
+      e.preventDefault();
+      if (e.key === "ArrowUp" || e.key === "k") {
+        setLine(currentLine !== undefined ? currentLine - 1 : 0);
+      } else if (e.key === "ArrowDown" || e.key === "j" || e.key === "Space") {
+        setLine(currentLine !== undefined ? currentLine + 1 : 0);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [currentLine, setLine]);
+
   return (
     <div className="flex flex-col items-center justify-center">
       <h2 className="text-3xl font-extrabold tracking-tight">
         Subtitle Control
       </h2>
-      <span className="text-2xl font-bold tracking-tight">
-        {currentSubtitle?.bottom}
-      </span>
+      {subtitles.map((subtitle, i) => (
+        <div
+          key={i}
+          className={i === currentLine ? "text-2xl font-bold" : ""}
+          onClick={() => {
+            setLine(i);
+          }}
+        >
+          {subtitle.bottom}
+          <span>
+            {subtitle.top} - {subtitle.left} - {subtitle.right}
+          </span>
+        </div>
+      ))}
       <div className="flex items-center justify-center">
         <button
           disabled={currentLine === undefined}
