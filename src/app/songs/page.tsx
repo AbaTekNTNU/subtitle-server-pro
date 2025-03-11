@@ -13,14 +13,15 @@ export default async function Songs() {
             Existing Songs
           </h1>
           {allSongs.map((song) => (
-            <div
+            <a
               key={song.id}
               className="flex flex-col items-center justify-center gap-4"
+              href={`/songs/${song.id}`}
             >
               <h2 className="text-3xl font-extrabold tracking-tight">
                 {song.title}
               </h2>
-            </div>
+            </a>
           ))}
           <Link href="/songs/add">Add Song</Link>
         </div>

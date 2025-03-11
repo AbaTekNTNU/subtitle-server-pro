@@ -2,12 +2,21 @@
 
 import { api } from "~/trpc/react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function SongEditor() {
+type Props = {
+  id?: number;
+  title?: string;
+  subtitleLines?: string;
+};
+
+export default function SongEditor(props: Props) {
   const addSong = api.songs.add.useMutation();
+  const editSong = api.songs.edit.useMutation();
+  const router = useRouter();
 
-  const [title, setTitle] = useState("");
-  const [subtitleLines, setSubtitleLines] = useState("");
+  const [title, setTitle] = useState(props.title ?? "");
+  const [subtitleLines, setSubtitleLines] = useState(props.subtitleLines ?? "");
 
   return (
     <div className="flex flex-col">
@@ -32,26 +41,39 @@ export default function SongEditor() {
       <button
         className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
         onClick={() =>
-          addSong
-            .mutateAsync({
-              title,
-              subtitleLines: subtitleLines
-                .split(/\n/)
-                .map((line) => line.split("::"))
-                .map(([bottom, top, left, right]) => ({
-                  bottom: bottom?.trim(),
-                  top: top?.trim(),
-                  left: left?.trim(),
-                  right: right?.trim(),
-                })),
-            })
-            .then(() => {
-              setTitle("");
-              setSubtitleLines("");
-            })
+          props.id
+            ? editSong
+                .mutateAsync({
+                  id: props.id,
+                  title,
+                  subtitleLines: subtitleLines
+                    .split(/\n/)
+                    .map((line) => line.split("::"))
+                    .map(([bottom, top, left, right]) => ({
+                      bottom: bottom?.trim(),
+                      top: top?.trim(),
+                      left: left?.trim(),
+                      right: right?.trim(),
+                    })),
+                })
+                .then(() => router.push("/songs"))
+            : addSong
+                .mutateAsync({
+                  title,
+                  subtitleLines: subtitleLines
+                    .split(/\n/)
+                    .map((line) => line.split("::"))
+                    .map(([bottom, top, left, right]) => ({
+                      bottom: bottom?.trim(),
+                      top: top?.trim(),
+                      left: left?.trim(),
+                      right: right?.trim(),
+                    })),
+                })
+                .then(() => router.push("/songs"))
         }
       >
-        Add Song
+        {props.id !== undefined ? "Edit Song" : "Add Song"}
       </button>
     </div>
   );

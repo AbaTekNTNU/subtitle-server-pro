@@ -38,4 +38,32 @@ export const songsRouter = createTRPCRouter({
         throw new Error("Failed to add song");
       }
     }),
+
+  edit: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        title: z.string(),
+        subtitleLines: z.array(subtitleSchema),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.db.song.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            ...input,
+            subtitleLines: {
+              deleteMany: {},
+              create: input.subtitleLines,
+            },
+          },
+        });
+      } catch (error) {
+        console.error("Error editing song:", error);
+        throw new Error("Failed to edit song");
+      }
+    }),
 });
