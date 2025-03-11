@@ -6,7 +6,7 @@ export default async function Subs() {
 
   return (
     <HydrateClient>
-      <main className="flex min-h-screen bg-black text-white">
+      <main className="flex min-h-screen bg-none text-white">
         <SubtitleView initialSubtitle={initialSubtitle} />
       </main>
     </HydrateClient>
