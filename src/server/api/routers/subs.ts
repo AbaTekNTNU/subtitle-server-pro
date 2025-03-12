@@ -18,7 +18,7 @@ export const currentSubEmitter = new EventEmitter<{ set: Subtitle[] }>();
 export const subsRouter = createTRPCRouter({
   getCurrentSubtitle: publicProcedure.query(async () => {
     return {
-      bottom: "Test!",
+      bottom: "",
     };
   }),
 
