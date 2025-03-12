@@ -30,7 +30,7 @@ export default async function EditSong({
             subtitleLines={thisSong.subtitleLines.reduce(
               (acc, { bottom, top, left, right }) =>
                 acc +
-                [bottom, top, left, right].filter(Boolean).join(":") +
+                [bottom, top, left, right].filter(Boolean).join("::") +
                 "\n",
               "",
             )}
