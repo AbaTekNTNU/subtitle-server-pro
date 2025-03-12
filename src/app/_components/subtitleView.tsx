@@ -21,12 +21,20 @@ export default function SubtitleView({ initialSubtitle }: Props) {
           {currentSubtitle.bottom}
         </p>
         <p className="absolute left-0 right-0 top-0">{currentSubtitle.top}</p>
-        <p className="absolute bottom-1/2 left-0 translate-y-1/2">
-          {currentSubtitle.left}
-        </p>
-        <p className="absolute bottom-1/2 right-0 translate-y-1/2">
-          {currentSubtitle.right}
-        </p>
+        {currentSubtitle.left && currentSubtitle.right ? (
+          <>
+            <p className="absolute bottom-1/2 left-0 translate-y-1/2">
+              {currentSubtitle.left}
+            </p>
+            <p className="absolute bottom-1/2 right-0 translate-y-1/2">
+              {currentSubtitle.right}
+            </p>
+          </>
+        ) : (
+          <p className="absolute bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2">
+            {currentSubtitle.right ?? currentSubtitle.left}
+          </p>
+        )}
       </div>
     </>
   );
