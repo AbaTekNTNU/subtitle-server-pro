@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "~/trpc/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Subtitle } from "~/server/api/routers/subs";
 
 type Props = {
@@ -12,16 +12,27 @@ export default function SubtitleControl({ subtitles }: Props) {
   const setActiveSubtitle = api.subs.setActiveSubtitle.useMutation();
   const [currentLine, setCurrentLine] = useState<number>();
 
-  const setLine = (line: number) => {
-    if (line < 0 || line >= subtitles.length) {
-      setCurrentLine(undefined);
-      setActiveSubtitle.mutate({});
-      return;
-    }
-    setCurrentLine(line);
-    const subtitle = subtitles[line];
-    if (subtitle) setActiveSubtitle.mutate(subtitle);
-  };
+  const setLine = useCallback(
+    (line: number) => {
+      if (line < 0 || line >= subtitles.length) {
+        setCurrentLine(undefined);
+        setActiveSubtitle.mutate({});
+        return;
+      }
+      setCurrentLine(line);
+      const subtitle = subtitles[line];
+      const element = document.getElementById(`subtitle-${line + 5}`);
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
+        });
+      }
+      if (subtitle) setActiveSubtitle.mutate(subtitle);
+    },
+    [setActiveSubtitle, subtitles],
+  );
 
   useEffect(() => {
     // add event listener for keydown
@@ -48,6 +59,7 @@ export default function SubtitleControl({ subtitles }: Props) {
       {subtitles.map((subtitle, i) => (
         <div
           key={i}
+          id={`subtitle-${i}`}
           className={i === currentLine ? "text-2xl font-bold" : ""}
           onClick={() => {
             setLine(i);
